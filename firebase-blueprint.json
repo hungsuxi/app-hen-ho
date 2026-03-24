@@ -1,0 +1,107 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Core user account information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Unique user ID" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["user", "admin"] },
+        "accountStatus": { "type": "string", "enum": ["active", "suspended"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Detailed user profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "fullName": { "type": "string" },
+        "birthYear": { "type": "integer" },
+        "gender": { "type": "string" },
+        "hometownVn": { "type": "string" },
+        "heightCm": { "type": "integer" },
+        "koreanRegion": { "type": "string" },
+        "occupation": { "type": "string" },
+        "datingGoal": { "type": "string" },
+        "bio": { "type": "string" },
+        "avatarUrl": { "type": "string" },
+        "smoking": { "type": "string", "enum": ["yes", "no", "sometimes"] },
+        "drinking": { "type": "string", "enum": ["often", "sometimes", "no"] },
+        "mbti": { "type": "string" },
+        "religion": { "type": "string" },
+        "lastSubmittedAt": { "type": "string", "format": "date-time" },
+        "approvalStatus": { "type": "string", "enum": ["draft", "pending_review", "approved", "rejected"] }
+      },
+      "required": ["uid", "fullName", "approvalStatus"]
+    },
+    "Match": {
+      "title": "Match",
+      "description": "A mutual connection between two users",
+      "type": "object",
+      "properties": {
+        "users": { "type": "array", "items": { "type": "string" } },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      }
+    },
+    "Event": {
+      "title": "Event",
+      "description": "Offline meetup event",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "city": { "type": "string" },
+        "eventDate": { "type": "string" },
+        "capacity": { "type": "integer" },
+        "status": { "type": "string" }
+      }
+    },
+    "EventRegistration": {
+      "title": "EventRegistration",
+      "description": "User registration for an event",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "eventId": { "type": "string" },
+        "eventTitle": { "type": "string" },
+        "registeredAt": { "type": "string" },
+        "status": { "type": "string" }
+      }
+    },
+    "Report": {
+      "title": "Report",
+      "description": "A report against a user profile",
+      "type": "object",
+      "properties": {
+        "reporterId": { "type": "string" },
+        "targetId": { "type": "string" },
+        "reason": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      }
+    },
+    "Message": {
+      "title": "Message",
+      "description": "A chat message",
+      "type": "object",
+      "properties": {
+        "senderId": { "type": "string" },
+        "content": { "type": "string" },
+        "createdAt": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{uid}": { "schema": "User", "description": "User account documents" },
+    "/profiles/{uid}": { "schema": "UserProfile", "description": "User profile documents" },
+    "/matches/{matchId}": { "schema": "Match", "description": "Connection documents" },
+    "/events/{eventId}": { "schema": "Event", "description": "Event documents" },
+    "/eventRegistrations/{regId}": { "schema": "EventRegistration", "description": "Event registration documents" },
+    "/reports/{reportId}": { "schema": "Report", "description": "User report documents" },
+    "/chats/{chatId}/messages/{msgId}": { "schema": "Message", "description": "Chat messages" }
+  }
+}

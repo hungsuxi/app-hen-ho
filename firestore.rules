@@ -1,0 +1,122 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: uid
+    // Fields:
+    //   - uid: string (required)
+    //   - email: string (required)
+    //   - role: string (required, enum: ['user', 'admin'])
+    //
+    // Collection: profiles
+    // Document ID: uid
+    // Fields:
+    //   - uid: string (required)
+    //   - fullName: string (required)
+    //   - birthYear: integer
+    //   - gender: string
+    //   - hometownVn: string
+    //   - heightCm: integer
+    //   - koreanRegion: string
+    //   - occupation: string
+    //   - datingGoal: string
+    //   - bio: string
+    //   - avatarUrl: string
+    //   - smoking: string (enum: ['yes', 'no', 'sometimes'])
+    //   - drinking: string (enum: ['often', 'sometimes', 'no'])
+    //   - mbti: string
+    //   - religion: string
+    //   - approvalStatus: string (required, enum: ['draft', 'pending_review', 'approved', 'rejected'])
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+        ( (request.auth.token.email == "michintashop@gmail.com" && request.auth.token.email_verified == true) ||
+          (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin') );
+    }
+
+    function isValidProfile(data) {
+      return data.uid is string &&
+             data.fullName is string && data.fullName.size() > 0 && data.fullName.size() < 100 &&
+             data.approvalStatus in ['draft', 'pending_review', 'approved', 'rejected'] &&
+             (!('smoking' in data) || data.smoking in ['yes', 'no', 'sometimes']) &&
+             (!('drinking' in data) || data.drinking in ['often', 'sometimes', 'no']) &&
+             (!('mbti' in data) || (data.mbti is string && data.mbti.size() <= 10)) &&
+             (!('religion' in data) || (data.religion is string && data.religion.size() <= 100));
+    }
+
+    function isProfileNotLocked() {
+      return isAdmin() || 
+             !('lastSubmittedAt' in resource.data) || 
+             request.time > resource.data.lastSubmittedAt + duration.value(7, 'd');
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+    
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow create: if isAuthenticated() && request.auth.uid == uid;
+      allow update: if isAdmin();
+    }
+    
+    match /profiles/{uid} {
+      // Allow read if profile is approved, or if user is owner/admin
+      allow read: if (resource != null && resource.data.approvalStatus == 'approved') || isOwner(uid) || isAdmin();
+      allow create: if (isOwner(uid) || isAdmin()) && isValidProfile(request.resource.data);
+      allow update: if (isOwner(uid) || isAdmin()) && isProfileNotLocked() && isValidProfile(request.resource.data);
+    }
+    
+    match /matches/{matchId} {
+      allow read: if isAuthenticated() && (request.auth.uid in resource.data.users || isAdmin());
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (request.auth.uid in resource.data.users || isAdmin());
+    }
+    
+    match /events/{eventId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    
+    match /eventRegistrations/{regId} {
+      allow read: if isAuthenticated() && (request.auth.uid == resource.data.userId || isAdmin());
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.userId;
+      allow update: if isAdmin();
+    }
+
+    match /reports/{reportId} {
+      allow read, update, delete: if isAdmin();
+      allow create: if isAuthenticated();
+    }
+
+    match /chats/{chatId} {
+      allow read: if isAuthenticated() && (request.auth.uid in resource.data.users || isAdmin());
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (request.auth.uid in resource.data.users || isAdmin());
+      
+      match /messages/{messageId} {
+        allow read: if isAuthenticated() && (request.auth.uid in get(/databases/$(database)/documents/matches/$(chatId)).data.users || isAdmin());
+        allow create: if isAuthenticated() && 
+          (request.auth.uid in get(/databases/$(database)/documents/matches/$(chatId)).data.users) &&
+          get(/databases/$(database)/documents/matches/$(chatId)).data.status == 'matched';
+      }
+    }
+  }
+}
