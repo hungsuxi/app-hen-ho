@@ -52,17 +52,19 @@ const Navbar = () => {
   return (
     <header
       className={cn(
-        'fixed top-6 left-1/2 z-50 w-[90%] max-w-5xl -translate-x-1/2 transition-all duration-300',
-        isScrolled ? 'top-4' : 'top-6'
+        'fixed left-1/2 z-50 w-[95%] sm:w-[90%] max-w-5xl -translate-x-1/2 transition-all duration-300',
+        isScrolled 
+          ? 'bottom-6 top-auto sm:top-4 sm:bottom-auto' 
+          : 'top-6 bottom-auto'
       )}
     >
       <nav
         className={cn(
-          'flex items-center justify-between rounded-full bg-white/80 px-6 py-3 shadow-lg backdrop-blur-md border border-white/20',
+          'flex items-center justify-between rounded-full bg-white/90 px-4 sm:px-6 py-2 sm:py-3 shadow-lg backdrop-blur-md border border-white/20',
           isScrolled && 'shadow-xl'
         )}
       >
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className={cn("items-center gap-2", isScrolled ? "hidden sm:flex" : "flex")}>
           <div className="h-8 w-8 rounded-full bg-gradient-to-r from-[#ff5a7a] to-[#8a14d1] flex items-center justify-center">
             <Heart className="h-4 w-4 text-white fill-current" />
           </div>
@@ -71,7 +73,7 @@ const Navbar = () => {
           </span>
         </Link>
 
-        <div className="flex items-center gap-1 sm:gap-4">
+        <div className="flex items-center gap-1 sm:gap-2 lg:gap-4">
           {filteredNavItems.map((item) => {
             const isActive = location.pathname === item.path;
             const isDisabled = isRejected && item.restricted;
@@ -80,11 +82,11 @@ const Navbar = () => {
               return (
                 <div
                   key={item.path}
-                  className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-slate-300 cursor-not-allowed opacity-50 grayscale blur-[0.5px]"
+                  className="flex items-center gap-1 sm:gap-2 rounded-full px-2 sm:px-4 py-2 text-sm font-medium text-slate-300 cursor-not-allowed opacity-50 grayscale blur-[0.5px]"
                   title="Hồ sơ của bạn đã bị từ chối. Vui lòng cập nhật lại thông tin."
                 >
-                  <item.icon className="h-4 w-4" />
-                  <span className="hidden md:block">{item.label}</span>
+                  <item.icon className="h-5 w-5 sm:h-4 sm:w-4 flex-shrink-0" />
+                  <span className="hidden xl:block whitespace-nowrap">{item.label}</span>
                 </div>
               );
             }
@@ -94,19 +96,19 @@ const Navbar = () => {
                 key={item.path}
                 to={item.path}
                 className={cn(
-                  'relative flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors',
+                  'relative flex items-center gap-1 sm:gap-2 rounded-full px-2 sm:px-4 py-2 text-sm font-medium transition-colors',
                   isActive ? 'text-[#ff5a7a]' : 'text-slate-600 hover:text-slate-900'
                 )}
               >
                 {isActive && (
                   <motion.div
                     layoutId="nav-active"
-                    className="absolute inset-0 rounded-full bg-[#ff5a7a10]"
+                    className="absolute inset-0 rounded-full bg-[#ff5a7a15]"
                     transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                   />
                 )}
-                <item.icon className="h-4 w-4" />
-                <span className="hidden md:block">{item.label}</span>
+                <item.icon className="h-5 w-5 sm:h-4 sm:w-4 flex-shrink-0" />
+                <span className="hidden xl:block whitespace-nowrap">{item.label}</span>
               </Link>
             );
           })}
@@ -115,12 +117,19 @@ const Navbar = () => {
             <Link
               to="/admin"
               className={cn(
-                'flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900',
-                location.pathname === '/admin' && 'text-[#8a14d1]'
+                'relative flex items-center gap-1 sm:gap-2 rounded-full px-2 sm:px-4 py-2 text-sm font-medium transition-colors',
+                location.pathname === '/admin' ? 'text-[#8a14d1]' : 'text-slate-600 hover:text-slate-900'
               )}
             >
-              <ShieldCheck className="h-4 w-4" />
-              <span className="hidden md:block">Admin</span>
+              {location.pathname === '/admin' && (
+                <motion.div
+                  layoutId="nav-active"
+                  className="absolute inset-0 rounded-full bg-[#8a14d115]"
+                  transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                />
+              )}
+              <ShieldCheck className="h-5 w-5 sm:h-4 sm:w-4 flex-shrink-0" />
+              <span className="hidden xl:block whitespace-nowrap">Admin</span>
             </Link>
           )}
         </div>
@@ -128,7 +137,7 @@ const Navbar = () => {
         {user ? (
           <button 
             onClick={handleLogout}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-colors"
+            className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-colors"
             title="Đăng xuất"
           >
             <LogOut className="h-4 w-4" />
@@ -136,7 +145,7 @@ const Navbar = () => {
         ) : (
           <Link 
             to="/login"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-[#ff5a7a] text-white hover:bg-[#ff4a6a] transition-colors"
+            className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-[#ff5a7a] text-white hover:bg-[#ff4a6a] transition-colors"
             title="Đăng nhập"
           >
             <LogIn className="h-4 w-4" />

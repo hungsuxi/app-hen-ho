@@ -132,30 +132,30 @@ const Matches = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f7f3f3] pt-32 pb-20">
-      <div className="container mx-auto max-w-5xl px-6">
+    <div className="min-h-screen bg-[#f7f3f3] pt-20 sm:pt-32 pb-24 sm:pb-20">
+      <div className="container mx-auto max-w-5xl px-4 sm:px-6">
         {/* Header */}
-        <div className="mb-12 text-center">
+        <div className="mb-8 sm:mb-12 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-4 inline-flex items-center gap-2 rounded-full bg-[#ff5a7a10] px-4 py-2 text-sm font-bold text-[#ff5a7a]"
+            className="mb-3 sm:mb-4 inline-flex items-center gap-2 rounded-full bg-[#ff5a7a10] px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-[#ff5a7a]"
           >
-            <Heart className="h-4 w-4 fill-current" />
-            <span>Những kết nối tuyệt vời của bạn</span>
+            <Heart className="h-3.5 w-3.5 sm:h-4 sm:w-4 fill-current" />
+            <span>Những kết nối của bạn</span>
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl"
+            className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-5xl"
           >
             Danh sách <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff5a7a] to-[#8a14d1]">Match</span>
           </motion.h1>
         </div>
 
         {/* Tabs */}
-        <div className="mb-10 flex items-center justify-center gap-4">
+        <div className="mb-8 grid grid-cols-3 gap-2 sm:flex sm:items-center sm:justify-center sm:gap-4">
           {[
             { id: 'matched', label: 'Đã Match', icon: Users, count: counts.matched },
             { id: 'pending', label: 'Đang chờ', icon: Clock, count: counts.pending },
@@ -165,17 +165,17 @@ const Matches = () => {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                'flex items-center gap-2 rounded-full px-8 py-3 text-sm font-bold transition-all',
+                'flex items-center justify-center gap-1.5 sm:gap-2 whitespace-nowrap rounded-full px-1 sm:px-8 py-2.5 sm:py-3 text-[10px] sm:text-sm font-bold transition-all border',
                 activeTab === tab.id 
-                  ? 'bg-slate-900 text-white shadow-lg' 
-                  : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-100'
+                  ? 'bg-slate-900 text-white shadow-lg border-slate-900' 
+                  : 'bg-white text-slate-600 hover:bg-slate-50 border-slate-200'
               )}
             >
-              <tab.icon className="h-4 w-4" />
-              {tab.label}
+              <tab.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <span className="truncate">{tab.label}</span>
               {tab.count > 0 && (
                 <span className={cn(
-                  "ml-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px]",
+                  "flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full text-[9px] sm:text-[10px] flex-shrink-0",
                   activeTab === tab.id ? "bg-white/20 text-white" : "bg-[#ff5a7a10] text-[#ff5a7a]"
                 )}>
                   {tab.count}
@@ -193,7 +193,7 @@ const Matches = () => {
         ) : (
           <>
             {/* Matches Grid */}
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
               {filteredMatches.map((match, i) => (
                 <motion.div
                   key={match.id}
@@ -201,107 +201,100 @@ const Matches = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: i * 0.1 }}
                 >
-                  <Card className="group relative overflow-hidden p-0 transition-all hover:-translate-y-1 hover:shadow-xl">
-                <div className="relative aspect-[4/5] overflow-hidden">
+                  <Card className="group relative overflow-hidden p-0 transition-all hover:-translate-y-1 hover:shadow-xl rounded-2xl sm:rounded-3xl">
+                <div className="relative aspect-[3/4] sm:aspect-[4/5] overflow-hidden">
                   <img
                     src={match.avatarUrl}
                     alt={match.fullName}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
                   
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <div className="mb-2 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-xl font-bold text-white">
+                  <div className="absolute bottom-2 left-2 right-2 sm:bottom-4 sm:left-4 sm:right-4">
+                    <div className="mb-1 flex items-center justify-between gap-1">
+                      <div className="flex min-w-0 items-center gap-1">
+                        <h3 className="truncate text-sm font-bold text-white sm:text-xl">
                           {match.fullName}, {calculateAge(match.birthYear)}
                         </h3>
-                        <ShieldCheck className="h-4 w-4 text-blue-400" />
+                        <ShieldCheck className="h-3 w-3 flex-shrink-0 text-blue-400 sm:h-4 sm:w-4" />
                       </div>
-                      <div className="flex items-center gap-1 rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-bold text-white backdrop-blur-sm border border-white/20">
-                        <Sparkles className="h-3 w-3" />
+                      <div className="flex flex-shrink-0 items-center gap-0.5 rounded-full bg-white/20 px-1.5 py-0.5 text-[8px] font-bold text-white backdrop-blur-sm border border-white/20 sm:gap-1 sm:px-2 sm:text-[10px]">
+                        <Sparkles className="h-2 w-2 sm:h-3 sm:w-3" />
                         <span>{match.matchPercentage}%</span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 text-xs font-medium text-white/80">
-                      <div className="flex items-center gap-1">
-                        <MapPin className="h-3 w-3" />
-                        <span>{match.koreanRegion}</span>
+                    <div className="flex flex-wrap items-center gap-1 text-[9px] font-medium text-white/80 sm:gap-3 sm:text-xs">
+                      <div className="flex items-center gap-0.5 sm:gap-1">
+                        <MapPin className="h-2 w-2 sm:h-3 sm:w-3" />
+                        <span className="truncate">{match.koreanRegion}</span>
                       </div>
-                      <div className="h-1 w-1 rounded-full bg-white/40" />
-                      <span>{match.datingGoal}</span>
+                      <div className="hidden h-1 w-1 rounded-full bg-white/40 sm:block" />
+                      <span className="truncate">{match.datingGoal === 'serious' ? 'Nghiêm túc' : match.datingGoal}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-5">
+                <div className="p-2 sm:p-5">
                   {match.status === 'matched' ? (
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-3 rounded-2xl bg-slate-50 p-3">
-                        <MessageCircle className="mt-1 h-4 w-4 text-slate-400" />
-                        <p className="line-clamp-1 text-sm text-slate-600">
+                    <div className="space-y-2 sm:space-y-4">
+                      <div className="flex items-start gap-1.5 rounded-xl bg-slate-50 p-1.5 sm:gap-3 sm:rounded-2xl sm:p-3">
+                        <MessageCircle className="mt-0.5 h-3 w-3 flex-shrink-0 text-slate-400 sm:h-4 sm:w-4" />
+                        <p className="line-clamp-1 text-[10px] text-slate-600 sm:text-sm">
                           {match.lastMessage || 'Chưa có tin nhắn mới'}
                         </p>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex gap-1.5 sm:gap-2">
                         <Button 
                           variant="gradient" 
-                          className="flex-1 rounded-xl"
+                          className="h-8 flex-1 rounded-lg px-2 text-[10px] sm:h-10 sm:rounded-xl sm:text-sm"
                           onClick={() => navigate('/chat', { state: { chatId: match.id } })}
                         >
-                          Nhắn tin ngay
+                          Nhắn tin
                         </Button>
                         <Button 
                           variant="outline" 
                           size="icon" 
-                          className="rounded-xl border-slate-200"
+                          className="h-8 w-8 rounded-lg border-slate-200 sm:h-10 sm:w-10 sm:rounded-xl"
                           onClick={() => navigate(`/profile/${match.otherUid}`)}
                         >
-                          <User className="h-4 w-4" />
+                          <User className="h-3 w-3 sm:h-4 sm:w-4" />
                         </Button>
                       </div>
                     </div>
                   ) : activeTab === 'pending' ? (
-                    <div className="space-y-4">
-                      <p className="text-center text-sm font-medium text-slate-500">
-                        {match.fullName} muốn kết nối với bạn
+                    <div className="space-y-2 sm:space-y-4">
+                      <p className="text-center text-[10px] font-medium text-slate-500 sm:text-sm">
+                        Muốn kết nối với bạn
                       </p>
-                      <div className="flex gap-2">
+                      <div className="flex gap-1.5 sm:gap-2">
                         <Button 
                           variant="gradient" 
-                          className="flex-1 rounded-xl"
+                          className="h-8 flex-1 rounded-lg px-1 text-[10px] sm:h-10 sm:rounded-xl sm:text-sm"
                           onClick={() => handleAcceptMatch(match.id)}
                         >
                           Chấp nhận
                         </Button>
                         <Button 
                           variant="outline" 
-                          className="flex-1 rounded-xl border-slate-200"
+                          className="h-8 flex-1 rounded-lg px-1 text-[10px] border-slate-200 sm:h-10 sm:rounded-xl sm:text-sm"
                           onClick={() => handleRejectMatch(match.id)}
                         >
                           Từ chối
                         </Button>
                       </div>
-                      <Button 
-                        variant="ghost" 
-                        className="w-full rounded-xl text-slate-500"
-                        onClick={() => navigate(`/profile/${match.otherUid}`)}
-                      >
-                        Xem hồ sơ chi tiết
-                      </Button>
                     </div>
                   ) : (
-                    <div className="space-y-4">
-                      <p className="text-center text-sm font-medium text-slate-500">
-                        Đang chờ phản hồi từ {match.fullName}
+                    <div className="space-y-2 sm:space-y-4">
+                      <p className="text-center text-[10px] font-medium text-slate-500 sm:text-sm">
+                        Đang chờ phản hồi
                       </p>
                       <Button 
                         variant="outline" 
-                        className="w-full rounded-xl border-slate-200"
+                        className="h-8 w-full rounded-lg text-[10px] border-slate-200 sm:h-10 sm:rounded-xl sm:text-sm"
                         onClick={() => navigate(`/profile/${match.otherUid}`)}
                       >
-                        Xem hồ sơ chi tiết
+                        Xem hồ sơ
                       </Button>
                     </div>
                   )}

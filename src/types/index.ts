@@ -40,6 +40,7 @@ export interface UserProfile {
   avatarUrl: string;
   photoUrls: string[];
   approvalStatus: ApprovalStatus;
+  lastActiveAt?: any;
   reviewNote?: string;
   submittedAt?: string;
   approvedAt?: string;
@@ -68,6 +69,8 @@ export interface Message {
   conversationId: string;
   senderId: string;
   content: string;
+  type?: 'text' | 'image';
+  imageUrl?: string;
   readAt?: string;
   createdAt: string;
 }

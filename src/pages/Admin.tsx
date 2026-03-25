@@ -5,7 +5,7 @@
 
 import * as React from 'react';
 import { motion } from 'framer-motion';
-import { Users, ShieldCheck, Calendar, MessageCircle, ShieldAlert, CheckCircle, XCircle, MoreVertical, Search, Filter, ArrowRight, Eye, MapPin, Briefcase, Heart, Info } from 'lucide-react';
+import { Users, ShieldCheck, Calendar, MessageCircle, ShieldAlert, CheckCircle, XCircle, MoreVertical, Search, Filter, ArrowRight, Eye, MapPin, Briefcase, Heart, Info, MessageSquare } from 'lucide-react';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import Modal from '@/src/components/ui/Modal';
@@ -37,7 +37,10 @@ const Admin = () => {
   const [selectedProfile, setSelectedProfile] = React.useState<UserProfile | null>(null);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = React.useState(false);
+  const [isChatModalOpen, setIsChatModalOpen] = React.useState(false);
   const [selectedReport, setSelectedReport] = React.useState<any | null>(null);
+  const [chatMessages, setChatMessages] = React.useState<any[]>([]);
+  const [selectedChatId, setSelectedChatId] = React.useState<string | null>(null);
   const [warningMessage, setWarningMessage] = React.useState('');
 
   React.useEffect(() => {
@@ -91,6 +94,25 @@ const Admin = () => {
 
     return () => unsubscribe();
   }, [isAdmin]);
+
+  React.useEffect(() => {
+    if (!selectedChatId || !isChatModalOpen) return;
+
+    const messagesRef = collection(db, 'chats', selectedChatId, 'messages');
+    const q = query(messagesRef, orderBy('createdAt', 'asc'));
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const msgs = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setChatMessages(msgs);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, `chats/${selectedChatId}/messages`);
+    });
+    
+    return () => unsubscribe();
+  }, [selectedChatId, isChatModalOpen]);
 
   React.useEffect(() => {
     if (!isAdmin) return;
@@ -246,6 +268,16 @@ const Admin = () => {
     }
   };
 
+  const handleViewChat = (report: any) => {
+    if (!report.chatId) {
+      showToast('Báo cáo này không đính kèm lịch sử trò chuyện.', 'info');
+      return;
+    }
+    setSelectedReport(report);
+    setSelectedChatId(report.chatId);
+    setIsChatModalOpen(true);
+  };
+
   const handleSeedTestData = async () => {
     setIsSeeding(true);
     try {
@@ -283,19 +315,19 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f7f3f3] pt-32 pb-20">
+    <div className="min-h-screen bg-[#f7f3f3] pt-20 sm:pt-32 pb-20">
       <ToastContainer />
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-4 sm:px-6">
         {/* Header */}
-        <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-8 sm:mb-12 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="mb-2 text-4xl font-extrabold text-slate-900 tracking-tight">Admin Dashboard</h1>
-            <p className="text-slate-500">Quản lý người dùng, duyệt hồ sơ và điều phối sự kiện.</p>
+            <h1 className="mb-2 text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight text-center sm:text-left">Admin Dashboard</h1>
+            <p className="text-sm sm:text-base text-slate-500 text-center sm:text-left">Quản lý người dùng, duyệt hồ sơ và điều phối sự kiện.</p>
           </div>
           <Button 
             onClick={handleSeedTestData}
             variant="outline" 
-            className="rounded-2xl bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+            className="w-full sm:w-auto rounded-2xl bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
             disabled={isSeeding}
           >
             <Database className="mr-2 h-4 w-4" /> 
@@ -304,10 +336,10 @@ const Admin = () => {
         </div>
 
         {/* Stats Grid */}
-        <div className="mb-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mb-8 sm:mb-12 grid gap-3 sm:gap-6 grid-cols-2 lg:grid-cols-4">
           {[
             { label: 'Tổng người dùng', value: totalUsers.toLocaleString(), icon: Users, color: 'text-blue-500', bg: 'bg-blue-50' },
-            { label: 'Hồ sơ đã duyệt', value: approvedProfilesCount.toLocaleString(), icon: CheckCircle, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+            { label: 'Đã duyệt', value: approvedProfilesCount.toLocaleString(), icon: CheckCircle, color: 'text-emerald-500', bg: 'bg-emerald-50' },
             { label: 'Chờ duyệt', value: pendingProfiles.length.toLocaleString(), icon: ShieldAlert, color: 'text-amber-500', bg: 'bg-amber-50' },
             { label: 'Sự kiện', value: totalEvents.toLocaleString(), icon: Calendar, color: 'text-purple-500', bg: 'bg-purple-50' },
           ].map((stat, i) => (
@@ -317,13 +349,13 @@ const Admin = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
             >
-              <Card className="flex items-center gap-6 p-8 border-none shadow-sm">
-                <div className={cn('flex h-16 w-16 items-center justify-center rounded-3xl', stat.bg, stat.color)}>
-                  <stat.icon className="h-8 w-8" />
+              <Card className="flex flex-col sm:flex-row items-center gap-2 sm:gap-6 p-3 sm:p-8 border-none shadow-sm text-center sm:text-left">
+                <div className={cn('flex h-10 w-10 sm:h-16 sm:w-16 items-center justify-center rounded-xl sm:rounded-3xl', stat.bg, stat.color)}>
+                  <stat.icon className="h-5 w-5 sm:h-8 sm:w-8" />
                 </div>
                 <div>
-                  <div className="text-3xl font-extrabold text-slate-900">{stat.value}</div>
-                  <div className="text-sm font-medium text-slate-500">{stat.label}</div>
+                  <div className="text-lg sm:text-3xl font-extrabold text-slate-900">{stat.value}</div>
+                  <div className="text-[9px] sm:text-sm font-medium text-slate-500 uppercase sm:normal-case tracking-wider sm:tracking-normal">{stat.label}</div>
                 </div>
               </Card>
             </motion.div>
@@ -331,10 +363,10 @@ const Admin = () => {
         </div>
 
         {/* Tabs */}
-        <div className="mb-10 flex gap-4 border-b border-slate-200">
+        <div className="mb-8 sm:mb-10 flex gap-6 border-b border-slate-200 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
           <button 
             className={cn(
-              "pb-4 text-sm font-bold transition-all border-b-2",
+              "pb-4 text-sm font-bold transition-all border-b-2 whitespace-nowrap",
               activeTab === 'profiles' ? "border-[#ff5a7a] text-[#ff5a7a]" : "border-transparent text-slate-400"
             )}
             onClick={() => setActiveTab('profiles')}
@@ -343,7 +375,7 @@ const Admin = () => {
           </button>
           <button 
             className={cn(
-              "pb-4 text-sm font-bold transition-all border-b-2",
+              "pb-4 text-sm font-bold transition-all border-b-2 whitespace-nowrap",
               activeTab === 'reports' ? "border-[#ff5a7a] text-[#ff5a7a]" : "border-transparent text-slate-400"
             )}
             onClick={() => setActiveTab('reports')}
@@ -353,16 +385,16 @@ const Admin = () => {
         </div>
 
         {activeTab === 'profiles' ? (
-          <div className="grid gap-8 lg:grid-cols-3">
+          <div className="grid gap-6 sm:gap-8 lg:grid-cols-3">
             {/* Left Column: Profile Review Queue */}
-            <div className="lg:col-span-2 space-y-6">
-              <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-slate-900">Duyệt hồ sơ mới ({pendingProfiles.length})</h2>
-                <div className="flex items-center gap-2">
+            <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Duyệt hồ sơ mới ({pendingProfiles.length})</h2>
+                <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1">
                   <Button 
                     variant={reviewFilter === 'pending' ? 'gradient' : 'outline'} 
                     size="sm" 
-                    className="rounded-xl bg-white"
+                    className="rounded-xl bg-white whitespace-nowrap"
                     onClick={() => setReviewFilter('pending')}
                   >
                     <Filter className="mr-2 h-4 w-4" /> Chờ duyệt
@@ -370,7 +402,7 @@ const Admin = () => {
                   <Button 
                     variant={reviewFilter === 'all' ? 'gradient' : 'outline'} 
                     size="sm" 
-                    className="rounded-xl bg-white"
+                    className="rounded-xl bg-white whitespace-nowrap"
                     onClick={() => setReviewFilter('all')}
                   >
                     Tất cả <ArrowRight className="ml-2 h-4 w-4" />
@@ -378,7 +410,7 @@ const Admin = () => {
                 </div>
               </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {pendingProfiles.length > 0 ? (
                 pendingProfiles.map((profile, i) => (
                   <motion.div
@@ -387,20 +419,20 @@ const Admin = () => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.1 }}
                   >
-                    <Card className="flex items-center justify-between p-6 border-none shadow-sm hover:shadow-md transition-all">
-                      <div className="flex items-center gap-4">
+                    <Card className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 border-none shadow-sm hover:shadow-md transition-all gap-4">
+                      <div className="flex items-center gap-3 sm:gap-4">
                         <img
                           src={profile.avatarUrl}
                           alt={profile.fullName}
-                          className="h-14 w-14 rounded-2xl object-cover"
+                          className="h-12 w-12 sm:h-14 sm:w-14 rounded-xl sm:rounded-2xl object-cover"
                           referrerPolicy="no-referrer"
                         />
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-bold text-slate-900">{profile.fullName}</h3>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="font-bold text-slate-900 truncate">{profile.fullName}</h3>
                             {reviewFilter === 'all' && (
                               <span className={cn(
-                                "rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                                "rounded-full px-2 py-0.5 text-[8px] sm:text-[10px] font-bold uppercase tracking-wider",
                                 profile.approvalStatus === 'approved' ? "bg-emerald-100 text-emerald-600" :
                                 profile.approvalStatus === 'rejected' ? "bg-red-100 text-red-600" :
                                 "bg-amber-100 text-amber-600"
@@ -410,33 +442,33 @@ const Admin = () => {
                               </span>
                             )}
                           </div>
-                          <div className="flex items-center gap-2 text-xs text-slate-500">
-                            <span>{profile.koreanRegion}</span>
+                          <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-slate-500 flex-wrap">
+                            <span className="truncate max-w-[80px] sm:max-w-none">{profile.koreanRegion}</span>
                             <span className="h-1 w-1 rounded-full bg-slate-300" />
-                            <span>{profile.occupation}</span>
+                            <span className="truncate max-w-[80px] sm:max-w-none">{profile.occupation}</span>
                             <span className="h-1 w-1 rounded-full bg-slate-300" />
                             <span>{profile.createdAt ? formatDate(profile.createdAt) : 'Mới'}</span>
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 w-full sm:w-auto">
                         <Button 
                           variant="secondary" 
                           size="sm" 
-                          className="rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200"
+                          className="flex-1 sm:flex-none rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200"
                           onClick={() => handleViewProfile(profile)}
                         >
-                          <Eye className="mr-2 h-4 w-4" /> Chi tiết
+                          <Eye className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" /> Chi tiết
                         </Button>
                         
                         {(profile.approvalStatus === 'pending_review' || profile.approvalStatus === 'rejected') && (
                           <Button 
                             variant="secondary" 
                             size="sm" 
-                            className="rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
+                            className="flex-1 sm:flex-none rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
                             onClick={() => handleReview(profile.uid, 'approved')}
                           >
-                            <CheckCircle className="mr-2 h-4 w-4" /> Duyệt
+                            <CheckCircle className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" /> Duyệt
                           </Button>
                         )}
                         
@@ -444,10 +476,10 @@ const Admin = () => {
                           <Button 
                             variant="secondary" 
                             size="sm" 
-                            className="rounded-xl bg-red-50 text-red-600 hover:bg-red-100"
+                            className="flex-1 sm:flex-none rounded-xl bg-red-50 text-red-600 hover:bg-red-100"
                             onClick={() => handleReview(profile.uid, 'rejected')}
                           >
-                            <XCircle className="mr-2 h-4 w-4" /> Từ chối
+                            <XCircle className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" /> Từ chối
                           </Button>
                         )}
                       </div>
@@ -562,6 +594,17 @@ const Admin = () => {
                   >
                     Xử lý
                   </Button>
+                  {report.chatId && (
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-blue-500 hover:bg-blue-50"
+                      onClick={() => handleViewChat(report)}
+                    >
+                      <MessageSquare className="h-4 w-4 mr-1" />
+                      Xem Chat
+                    </Button>
+                  )}
                   <Button 
                     variant="ghost" 
                     size="sm"
@@ -790,6 +833,47 @@ const Admin = () => {
             </div>
           </div>
         )}
+      </Modal>
+
+      {/* Chat History Modal */}
+      <Modal
+        isOpen={isChatModalOpen}
+        onClose={() => setIsChatModalOpen(false)}
+        title="Lịch sử trò chuyện"
+        className="max-w-2xl"
+      >
+        <div className="flex flex-col h-[500px]">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 rounded-2xl">
+            {chatMessages.length > 0 ? chatMessages.map((msg) => (
+              <div 
+                key={msg.id} 
+                className={cn(
+                  "flex flex-col max-w-[80%]",
+                  msg.senderId === selectedReport?.reporterId ? "mr-auto items-start" : "ml-auto items-end"
+                )}
+              >
+                <div className={cn(
+                  "rounded-2xl px-4 py-2 text-sm",
+                  msg.senderId === selectedReport?.reporterId 
+                    ? "bg-blue-500 text-white rounded-tl-none" 
+                    : "bg-slate-200 text-slate-700 rounded-tr-none"
+                )}>
+                  <div className="text-[10px] opacity-70 mb-1 font-bold">
+                    {msg.senderId === selectedReport?.reporterId ? "Người báo cáo" : "Người bị báo cáo"}
+                  </div>
+                  {msg.content}
+                </div>
+                <span className="mt-1 text-[10px] text-slate-400">
+                  {formatDate(msg.createdAt)}
+                </span>
+              </div>
+            )) : (
+              <div className="flex h-full items-center justify-center text-slate-400">
+                Không có tin nhắn nào.
+              </div>
+            )}
+          </div>
+        </div>
       </Modal>
     </div>
   </div>

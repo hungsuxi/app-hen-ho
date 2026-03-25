@@ -23,14 +23,14 @@ const Home = () => {
       <div className="absolute -top-40 -left-40 h-[600px] w-[600px] rounded-full bg-[#ff5a7a10] blur-[100px]" />
       <div className="absolute -bottom-40 -right-40 h-[600px] w-[600px] rounded-full bg-[#8a14d110] blur-[100px]" />
 
-      <main className="container relative mx-auto px-6 pt-40 pb-20">
+      <main className="container relative mx-auto px-4 sm:px-6 pt-24 sm:pt-40 pb-20">
         {/* Hero Section */}
         <div className="flex flex-col items-center text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-sm font-medium text-[#ff5a7a] shadow-sm backdrop-blur-sm border border-white/20"
+            className="mb-4 sm:mb-6 inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-xs sm:text-sm font-medium text-[#ff5a7a] shadow-sm backdrop-blur-sm border border-white/20"
           >
             <Sparkles className="h-4 w-4" />
             <span>Kết nối cộng đồng người Việt tại Hàn Quốc</span>
@@ -40,7 +40,7 @@ const Home = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="mb-8 max-w-4xl text-5xl font-extrabold tracking-tight text-slate-900 sm:text-7xl"
+            className="mb-6 sm:mb-8 max-w-4xl text-3xl font-extrabold tracking-tight text-slate-900 sm:text-7xl"
           >
             Tìm kiếm <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff5a7a] to-[#8a14d1]">tình yêu</span> & <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8a14d1] to-[#ff5a7a]">tri kỷ</span> đích thực
           </motion.h1>
@@ -49,7 +49,7 @@ const Home = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-12 max-w-2xl text-lg text-slate-600 sm:text-xl"
+            className="mb-8 sm:mb-12 max-w-2xl text-base text-slate-600 sm:text-xl"
           >
             VietConnect KR là nền tảng hẹn hò và meetup an toàn, nghiêm túc dành riêng cho người Việt tại Hàn Quốc. Mọi hồ sơ đều được duyệt kỹ lưỡng.
           </motion.p>
@@ -134,22 +134,65 @@ const Home = () => {
         </div>
 
         {/* Stats Section */}
-        <div className="mt-32 rounded-[40px] bg-gradient-to-br from-[#ff5a7a] to-[#8a14d1] p-12 text-white shadow-2xl">
-          <div className="grid gap-12 text-center sm:grid-cols-3">
+        <div className="mt-20 sm:mt-32 rounded-[32px] sm:rounded-[40px] bg-gradient-to-br from-[#ff5a7a] to-[#8a14d1] p-8 sm:p-12 text-white shadow-2xl">
+          <div className="grid gap-8 sm:gap-12 text-center sm:grid-cols-3">
             <div>
-              <div className="mb-2 text-5xl font-extrabold">5,000+</div>
-              <div className="text-lg font-medium opacity-80">Thành viên đã duyệt</div>
+              <div className="mb-1 sm:mb-2 text-3xl sm:text-5xl font-extrabold">5,000+</div>
+              <div className="text-sm sm:text-lg font-medium opacity-80">Thành viên đã duyệt</div>
             </div>
             <div>
-              <div className="mb-2 text-5xl font-extrabold">1,200+</div>
-              <div className="text-lg font-medium opacity-80">Cặp đôi đã match</div>
+              <div className="mb-1 sm:mb-2 text-3xl sm:text-5xl font-extrabold">1,200+</div>
+              <div className="text-sm sm:text-lg font-medium opacity-80">Cặp đôi đã match</div>
             </div>
             <div>
-              <div className="mb-2 text-5xl font-extrabold">150+</div>
-              <div className="text-lg font-medium opacity-80">Sự kiện đã tổ chức</div>
+              <div className="mb-1 sm:mb-2 text-3xl sm:text-5xl font-extrabold">150+</div>
+              <div className="text-sm sm:text-lg font-medium opacity-80">Sự kiện đã tổ chức</div>
             </div>
           </div>
         </div>
+
+        {/* Footer */}
+        <footer className="mt-32 border-t border-slate-200 pt-12">
+          <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[#ff5a7a] to-[#8a14d1] text-white shadow-lg">
+                  <Heart className="h-6 w-6 fill-current" />
+                </div>
+                <span className="text-xl font-extrabold tracking-tight text-slate-900">VietConnect KR</span>
+              </div>
+              <p className="text-sm text-slate-500 leading-relaxed">
+                Nền tảng hẹn hò và meetup an toàn, nghiêm túc dành riêng cho cộng đồng người Việt tại Hàn Quốc.
+              </p>
+            </div>
+            <div>
+              <h4 className="mb-6 text-sm font-bold uppercase tracking-wider text-slate-900">Khám phá</h4>
+              <ul className="space-y-4 text-sm text-slate-500">
+                <li><Link to="/explore" className="hover:text-[#ff5a7a] transition-colors">Tìm kiếm hồ sơ</Link></li>
+                <li><Link to="/events" className="hover:text-[#ff5a7a] transition-colors">Sự kiện Offline</Link></li>
+                <li><Link to="/matches" className="hover:text-[#ff5a7a] transition-colors">Tương hợp của tôi</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="mb-6 text-sm font-bold uppercase tracking-wider text-slate-900">Hỗ trợ</h4>
+              <ul className="space-y-4 text-sm text-slate-500">
+                <li><a href="#" className="hover:text-[#ff5a7a] transition-colors">Trung tâm trợ giúp</a></li>
+                <li><a href="#" className="hover:text-[#ff5a7a] transition-colors">Quy tắc cộng đồng</a></li>
+                <li><a href="#" className="hover:text-[#ff5a7a] transition-colors">Chính sách bảo mật</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="mb-6 text-sm font-bold uppercase tracking-wider text-slate-900">Liên hệ</h4>
+              <p className="text-sm text-slate-500">
+                Email: support@vietconnectkr.com<br />
+                Seoul, South Korea
+              </p>
+            </div>
+          </div>
+          <div className="mt-12 border-t border-slate-100 py-8 text-center text-xs text-slate-400">
+            © 2026 VietConnect KR. All rights reserved.
+          </div>
+        </footer>
       </main>
     </div>
   );

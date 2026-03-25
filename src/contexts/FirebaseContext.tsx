@@ -8,7 +8,7 @@ import { Component, ReactNode, ErrorInfo } from 'react';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { auth, db, handleFirestoreError, OperationType } from '../firebase';
 import { useAuthStore } from '../store/useAuthStore';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { UserProfile } from '../types/index';
 
 interface FirebaseContextType {
@@ -99,6 +99,31 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     return () => unsubscribe();
   }, [setUser, setProfile, setIsLoading]);
+
+  // Update last active status
+  React.useEffect(() => {
+    if (!auth.currentUser || !isAuthReady) return;
+
+    const updateLastActive = async () => {
+      try {
+        const profileRef = doc(db, 'profiles', auth.currentUser!.uid);
+        await updateDoc(profileRef, {
+          lastActiveAt: serverTimestamp(),
+        });
+      } catch (error) {
+        // Silently fail for background updates
+        console.warn('Failed to update last active status:', error);
+      }
+    };
+
+    // Initial update
+    updateLastActive();
+
+    // Update every 5 minutes
+    const interval = setInterval(updateLastActive, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, [isAuthReady, auth.currentUser?.uid]);
 
   return (
     <FirebaseContext.Provider value={{ isAuthReady }}>

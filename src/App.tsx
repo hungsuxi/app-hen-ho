@@ -29,7 +29,7 @@ export default function App() {
     <ErrorBoundary>
       <FirebaseProvider>
         <Router>
-          <div className="min-h-screen bg-[#f7f3f3] font-sans text-slate-900 selection:bg-[#ff5a7a20] selection:text-[#ff5a7a]">
+          <div className="min-h-screen bg-[#f7f3f3] font-sans text-slate-900 selection:bg-[#ff5a7a20] selection:text-[#ff5a7a] pb-24 sm:pb-0">
             <Navbar />
             
             {warningMessage && (

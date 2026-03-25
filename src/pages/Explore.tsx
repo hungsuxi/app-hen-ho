@@ -141,40 +141,40 @@ const Explore = () => {
   });
 
   return (
-    <div className="min-h-screen bg-[#f7f3f3] pt-32 pb-20">
-      <div className="container mx-auto px-6">
+    <div className="min-h-screen bg-[#f7f3f3] pt-20 sm:pt-32 pb-24 sm:pb-20">
+      <div className="container mx-auto px-4 sm:px-6">
         {/* Hero Section */}
-        <div className="relative mb-12 overflow-hidden rounded-[40px] bg-gradient-to-br from-[#ff5a7a] to-[#8a14d1] p-12 text-white shadow-xl">
+        <div className="relative mb-8 sm:mb-12 overflow-hidden rounded-[30px] sm:rounded-[40px] bg-gradient-to-br from-[#ff5a7a] to-[#8a14d1] p-6 sm:p-12 text-white shadow-xl">
           <div className="relative z-10 max-w-2xl">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-2 text-sm font-medium backdrop-blur-md"
+              className="mb-3 sm:mb-4 inline-flex items-center gap-2 rounded-full bg-white/20 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium backdrop-blur-md"
             >
-              <Sparkles className="h-4 w-4" />
-              <span>Khám phá những hồ sơ phù hợp nhất</span>
+              <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <span>Khám phá những hồ sơ phù hợp</span>
             </motion.div>
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl"
+              className="mb-4 sm:mb-6 text-3xl font-extrabold tracking-tight sm:text-5xl"
             >
               Tìm thấy <span className="text-white/80 italic">một nửa</span> của bạn tại Hàn Quốc
             </motion.h1>
             
-            <div className="flex flex-col gap-4 sm:flex-row">
+            <div className="flex flex-col gap-3 sm:flex-row">
               <div className="relative flex-1">
                 <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/60" />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Tìm kiếm theo tên, khu vực..."
-                  className="h-14 w-full rounded-2xl bg-white/10 pl-12 pr-4 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-white/40 backdrop-blur-md"
+                  placeholder="Tìm kiếm tên, khu vực..."
+                  className="h-12 sm:h-14 w-full rounded-xl sm:rounded-2xl bg-white/10 pl-11 sm:pl-12 pr-4 text-sm sm:text-base text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-white/40 backdrop-blur-md"
                 />
               </div>
-              <Button variant="secondary" size="lg" className="bg-white text-[#ff5a7a]">
+              <Button variant="secondary" size="lg" className="h-12 sm:h-14 bg-white text-[#ff5a7a] rounded-xl sm:rounded-2xl">
                 <Filter className="mr-2 h-5 w-5" /> Lọc hồ sơ
               </Button>
             </div>
@@ -186,7 +186,7 @@ const Explore = () => {
         </div>
 
         {/* Filter Tabs */}
-        <div className="mb-10 flex items-center gap-4 overflow-x-auto pb-2">
+        <div className="mb-8 flex items-center gap-2 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
           {[
             { id: 'all', label: 'Tất cả' },
             { id: 'verified', label: 'Đã xác thực' },
@@ -198,7 +198,7 @@ const Explore = () => {
               key={item.id}
               onClick={() => setFilter(item.id)}
               className={cn(
-                'whitespace-nowrap rounded-full px-6 py-2.5 text-sm font-bold transition-all',
+                'whitespace-nowrap rounded-full px-5 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm font-bold transition-all',
                 filter === item.id 
                   ? 'bg-slate-900 text-white shadow-md' 
                   : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-100'
@@ -210,15 +210,15 @@ const Explore = () => {
         </div>
 
         {/* Profiles Grid */}
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {isLoading ? (
-            Array.from({ length: 8 }).map((_, i) => (
-              <Card key={i} className="h-[400px] p-0 overflow-hidden">
+            Array.from({ length: 12 }).map((_, i) => (
+              <Card key={i} className="h-[280px] sm:h-[350px] p-0 overflow-hidden">
                 <Skeleton className="h-2/3 w-full rounded-none" />
-                <div className="p-6 space-y-4">
-                  <Skeleton className="h-6 w-3/4" />
-                  <Skeleton className="h-4 w-1/2" />
-                  <Skeleton className="h-10 w-full" />
+                <div className="p-3 sm:p-4 space-y-2">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-3 w-1/2" />
+                  <Skeleton className="h-8 w-full" />
                 </div>
               </Card>
             ))
@@ -228,11 +228,11 @@ const Explore = () => {
                 key={profile.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
+                transition={{ delay: i * 0.05 }}
               >
-                <Card className="group relative flex h-full flex-col overflow-hidden p-0 transition-all hover:-translate-y-2 hover:shadow-xl">
+                <Card className="group relative flex h-full flex-col overflow-hidden p-0 transition-all hover:-translate-y-2 hover:shadow-xl rounded-2xl sm:rounded-3xl">
                   {/* Profile Image */}
-                  <div className="relative aspect-[4/5] overflow-hidden">
+                  <div className="relative aspect-[3/4] overflow-hidden">
                     <Link to={`/profile/${profile.id}`}>
                       <img
                         src={profile.avatarUrl}
@@ -244,82 +244,89 @@ const Explore = () => {
                         referrerPolicy="no-referrer"
                       />
                     </Link>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none" />
                     
                     {/* Badges */}
-                    <div className="absolute top-4 left-4 flex flex-col gap-2">
-                      <div className="flex items-center gap-1.5 rounded-full bg-slate-900/80 px-3 py-1 text-[10px] font-bold text-white backdrop-blur-sm border border-white/10">
+                    <div className="absolute top-2 left-2 sm:top-4 sm:left-4 flex flex-col gap-1 sm:gap-2">
+                      <div className="flex items-center gap-1 sm:gap-1.5 rounded-full bg-slate-900/80 px-2 sm:px-3 py-0.5 sm:py-1 text-[8px] sm:text-[10px] font-bold text-white backdrop-blur-sm border border-white/10">
                         <span>ID: {(i + 1).toString().padStart(3, '0')}</span>
                       </div>
                       {profile.approvalStatus === 'approved' && (
-                        <div className="flex items-center gap-1.5 rounded-full bg-blue-500/90 px-3 py-1 text-[10px] font-bold text-white backdrop-blur-sm">
-                          <ShieldCheck className="h-3 w-3" />
-                          <span>ĐÃ XÁC THỰC</span>
+                        <div className="flex items-center gap-1 sm:gap-1.5 rounded-full bg-blue-500 px-2 sm:px-3 py-0.5 sm:py-1 text-[8px] sm:text-[10px] font-bold text-white shadow-sm shadow-blue-500/20">
+                          <ShieldCheck className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                          <span className="hidden sm:inline">ĐÃ XÁC THỰC</span>
+                          <span className="sm:hidden">XÁC THỰC</span>
                         </div>
                       )}
+                      {(() => {
+                        const now = new Date().getTime();
+                        const lastActive = profile.lastActiveAt?.toDate?.()?.getTime() || 0;
+                        const isOnline = (now - lastActive) < 10 * 60 * 1000;
+                        if (isOnline) {
+                          return (
+                            <div className="flex items-center gap-1 sm:gap-1.5 rounded-full bg-emerald-500 px-2 sm:px-3 py-0.5 sm:py-1 text-[8px] sm:text-[10px] font-bold text-white shadow-sm shadow-emerald-500/20">
+                              <div className="h-1 w-1 sm:h-1.5 sm:w-1.5 rounded-full bg-white animate-pulse" />
+                              <span className="hidden sm:inline">ĐANG HOẠT ĐỘNG</span>
+                              <span className="sm:hidden">ONLINE</span>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })()}
                       {!isGuest && (
-                        <div className="flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-[10px] font-bold text-white backdrop-blur-sm border border-white/20">
-                          <Sparkles className="h-3 w-3" />
-                          <span>{calculateMatchPercentage(currentUserProfile, profile)}% MATCH</span>
+                        <div className="flex items-center gap-1 sm:gap-1.5 rounded-full bg-white/20 px-2 sm:px-3 py-0.5 sm:py-1 text-[8px] sm:text-[10px] font-bold text-white backdrop-blur-sm border border-white/20">
+                          <Sparkles className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                          <span>{calculateMatchPercentage(currentUserProfile, profile)}% <span className="hidden sm:inline">MATCH</span></span>
                         </div>
                       )}
                     </div>
                   </div>
 
                   {/* Profile Info */}
-                  <div className="flex flex-1 flex-col p-6">
-                    <div className="mb-2 flex items-center justify-between">
-                      <h3 className="text-xl font-bold text-slate-900">
+                  <div className="flex flex-1 flex-col p-3 sm:p-6">
+                    <div className="mb-1 sm:mb-2 flex items-center justify-between">
+                      <h3 className="truncate text-sm sm:text-xl font-bold text-slate-900">
                         {profile.fullName}, {calculateAge(profile.birthYear)}
                       </h3>
                     </div>
 
                     {/* Hobbies, MBTI, Religion - show for everyone if present */}
-                    <div className="mb-4 flex flex-wrap gap-1.5">
-                      {Array.isArray(profile.hobbies) && profile.hobbies.slice(0, 2).map((hobby, idx) => (
-                        <span key={idx} className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-600">
+                    <div className="mb-2 sm:mb-4 flex flex-wrap gap-1 sm:gap-1.5">
+                      {Array.isArray(profile.hobbies) && profile.hobbies.slice(0, 1).map((hobby, idx) => (
+                        <span key={idx} className="rounded-full bg-slate-100 px-1.5 sm:px-2 py-0.5 text-[8px] sm:text-[10px] font-medium text-slate-600">
                           #{hobby}
                         </span>
                       ))}
                       {profile.mbti && (
-                        <span className="rounded-full bg-[#ff5a7a10] px-2 py-0.5 text-[10px] font-bold text-[#ff5a7a]">
+                        <span className="rounded-full bg-[#ff5a7a10] px-1.5 sm:px-2 py-0.5 text-[8px] sm:text-[10px] font-bold text-[#ff5a7a]">
                           {profile.mbti}
-                        </span>
-                      )}
-                      {profile.religion && profile.religion !== 'Không' && (
-                        <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-600">
-                          {profile.religion}
                         </span>
                       )}
                     </div>
                     
                     {!isGuest ? (
                       <div className="flex flex-1 flex-col">
-                        <div className="mb-4 flex flex-wrap gap-2">
-                          <div className="flex items-center gap-1 text-xs font-medium text-slate-500">
-                            <MapPin className="h-3 w-3" />
-                            <span>{profile.koreanRegion}</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-xs font-medium text-slate-500">
-                            <Briefcase className="h-3 w-3" />
-                            <span>{profile.occupation}</span>
+                        <div className="mb-2 sm:mb-4 flex flex-wrap gap-1.5 sm:gap-2">
+                          <div className="flex items-center gap-1 text-[10px] sm:text-xs font-medium text-slate-500">
+                            <MapPin className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                            <span className="truncate">{profile.koreanRegion}</span>
                           </div>
                         </div>
 
-                        <div className="mb-4">
-                          <span className="inline-block rounded-lg bg-[#ff5a7a10] px-3 py-1 text-[11px] font-bold text-[#ff5a7a] uppercase tracking-wider">
-                            {profile.datingGoal === 'serious' ? 'Hẹn hò nghiêm túc' : profile.datingGoal}
+                        <div className="mb-2 sm:mb-4">
+                          <span className="inline-block rounded-lg bg-[#ff5a7a10] px-2 sm:px-3 py-0.5 sm:py-1 text-[9px] sm:text-[11px] font-bold text-[#ff5a7a] uppercase tracking-wider">
+                            {profile.datingGoal === 'serious' ? 'Nghiêm túc' : profile.datingGoal}
                           </span>
                         </div>
 
-                        <p className="mb-6 line-clamp-2 text-sm text-slate-600 leading-relaxed">
+                        <p className="mb-3 sm:mb-6 line-clamp-1 sm:line-clamp-2 text-[11px] sm:text-sm text-slate-600 leading-relaxed">
                           {profile.bio}
                         </p>
 
-                        <div className="mt-auto flex gap-3">
+                        <div className="mt-auto flex gap-2 sm:gap-3">
                           <Button 
                             variant="gradient" 
-                            className="flex-1 rounded-2xl"
+                            className="h-8 sm:h-10 flex-1 rounded-xl text-xs sm:text-sm"
                             onClick={() => handleInterest(profile.id)}
                           >
                             Thích
@@ -327,24 +334,24 @@ const Explore = () => {
                           <Button 
                             variant="outline" 
                             size="icon" 
-                            className="rounded-2xl border-slate-200"
+                            className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl border-slate-200"
                             onClick={() => navigate(`/profile/${profile.id}`)}
                           >
-                            <UserIcon className="h-4 w-4" />
+                            <UserIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                           </Button>
                         </div>
                       </div>
                     ) : (
-                      <div className="mt-auto space-y-4">
-                        <div className="py-3 text-center border-y border-dashed border-slate-200">
-                          <p className="text-xs text-slate-400 italic">Đăng nhập để xem thêm thông tin</p>
+                      <div className="mt-auto space-y-2 sm:space-y-4">
+                        <div className="py-2 sm:py-3 text-center border-y border-dashed border-slate-200">
+                          <p className="text-[10px] sm:text-xs text-slate-400 italic">Đăng nhập để xem thêm</p>
                         </div>
                         <Button 
                           variant="gradient" 
-                          className="w-full rounded-2xl"
+                          className="h-8 sm:h-10 w-full rounded-xl text-xs sm:text-sm"
                           onClick={() => navigate('/login')}
                         >
-                          Đăng nhập để kết nối
+                          Đăng nhập
                         </Button>
                       </div>
                     )}

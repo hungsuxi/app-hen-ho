@@ -79,7 +79,9 @@
       "properties": {
         "reporterId": { "type": "string" },
         "targetId": { "type": "string" },
+        "targetName": { "type": "string" },
         "reason": { "type": "string" },
+        "chatId": { "type": "string" },
         "status": { "type": "string" },
         "createdAt": { "type": "string" }
       }
@@ -91,6 +93,8 @@
       "properties": {
         "senderId": { "type": "string" },
         "content": { "type": "string" },
+        "type": { "type": "string", "enum": ["text", "image"] },
+        "imageUrl": { "type": "string" },
         "createdAt": { "type": "string" }
       }
     }
